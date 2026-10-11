@@ -1,20 +1,71 @@
 import { useState } from 'react'
+
+// A URL is "not available" when it is empty or still a [PLACEHOLDER_*] value.
 export const isPlaceholder = (u) => !u || u.startsWith('[')
-export function Btn({ href, kind = 'ghost', children }) {
-  const off = isPlaceholder(href)
+// GitHub links are stored as clone URLs ending in .git; the web page lives at the same address without the suffix.
+export const webUrl = (u) => (u || '').replace(/\.git$/, '')
+export const hostOf = (u) => { try { return new URL(u).host } catch { return '' } }
+
+const paths = {
+  download: 'M12 3v12m0 0l-5-5m5 5l5-5M5 20h14',
+  external: 'M7 17L17 7M9 7h8v8',
+  eye: 'M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12zm10 3a3 3 0 100-6 3 3 0 000 6z',
+  close: 'M6 6l12 12M18 6L6 18',
+}
+export const Icon = ({ name, size = 16 }) => (
+  <svg className="ico" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d={paths[name]} />
+  </svg>
+)
+
+// Renders nothing when the destination is unavailable, so the page never shows a dead button.
+export function Btn({ href, kind = 'ghost', size, download, icon, children, ...rest }) {
+  if (isPlaceholder(href)) return null
+  const external = /^https?:/.test(href)
+  const cls = ['btn', kind, size].filter(Boolean).join(' ')
   return (
-    <a className={`btn ${kind}${off ? ' off' : ''}`} href={off ? undefined : href} role={off ? 'link' : undefined}
-       aria-disabled={off || undefined} tabIndex={off ? 0 : undefined}
-       target={!off && href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">{children}</a>
+    <a className={cls} href={webUrl(href)} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
+       {...(download ? { download: typeof download === 'string' ? download : true } : {})} {...rest}>
+      {icon === 'download' && <Icon name="download" />}
+      {children}
+      {external && <><Icon name="external" size={14} /><span className="sr">(opens in a new tab)</span></>}
+    </a>
   )
 }
-// Renders the image when present; otherwise a neutral schematic frame (never breaks the page).
-export function SafeImage({ src, alt, label, className = '' }) {
-  const [ok, setOk] = useState(true)
-  return ok ? <img className={className} src={src} alt={alt} loading="lazy" onError={() => setOk(false)} />
-    : <div className={`ph ${className}`} role="img" aria-label={alt}>
-        <svg viewBox="0 0 120 70" aria-hidden="true"><path d="M0 10H120M0 35H120M0 60H120M20 0V70M60 0V70M100 0V70" stroke="currentColor" strokeWidth=".4" opacity=".5"/>
-          <path d="M10 55L35 35 60 42 85 20 110 28" fill="none" stroke="var(--amb)" strokeWidth="1"/></svg>
-        {label && <span>{label}</span>}</div>
+
+export const TextLink = ({ href, children }) => {
+  if (isPlaceholder(href)) return null
+  const external = /^https?:/.test(href)
+  return <a className="tlink" href={webUrl(href)} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}>{children}{external && <span className="sr"> (opens in a new tab)</span>}</a>
 }
-export const Tags = ({ items }) => <ul className="tags">{items.map((t) => <li key={t}>{t}</li>)}</ul>
+
+// Shows the image when it loads; otherwise a neutral grid frame, so a missing file never breaks the layout.
+export function SafeImage({ src, alt, label, className = '', width, height, eager = false }) {
+  const [ok, setOk] = useState(true)
+  if (ok) return <img className={className} src={src} alt={alt} width={width} height={height} loading={eager ? 'eager' : 'lazy'} decoding="async" onError={() => setOk(false)} />
+  return (
+    <div className={`ph ${className}`} role="img" aria-label={alt}>
+      <svg viewBox="0 0 120 70" aria-hidden="true"><path d="M0 10H120M0 35H120M0 60H120M20 0V70M60 0V70M100 0V70" stroke="currentColor" strokeWidth=".4" opacity=".5" />
+        <path d="M10 55L35 35 60 42 85 20 110 28" fill="none" stroke="var(--cu)" strokeWidth="1" /></svg>
+      {label && <span>{label}</span>}
+    </div>
+  )
+}
+
+export const Tags = ({ items, max }) => {
+  const shown = max ? items.slice(0, max) : items
+  const rest = items.length - shown.length
+  return (
+    <ul className="tags" aria-label="Technologies">
+      {shown.map((t) => <li key={t}>{t}</li>)}
+      {rest > 0 && <li className="more">+{rest} more</li>}
+    </ul>
+  )
+}
+
+export const SectionHead = ({ title, children }) => (
+  <div className="sec-head" data-reveal>
+    <h2>{title}</h2>
+    {children && <p>{children}</p>}
+  </div>
+)
