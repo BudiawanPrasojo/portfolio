@@ -124,14 +124,18 @@ function Featured({ p, onDetails }) {
     <article className={`proj${p.flagship ? ' flagship' : ''}`} id={p.id} aria-labelledby={`${p.id}-title`} data-reveal>
       <div className="proj-media"><Media p={p} onOpen={() => onDetails(p)} /></div>
       <div className="proj-body">
-        <Meta p={p} flag />
-        <h3 id={`${p.id}-title`}>{p.name}</h3>
-        <p className="sub">{p.sub}</p>
-        <p className="desc">{p.desc}</p>
-        <Features items={p.features || []} limit={4} />
-        {p.tech?.length > 0 && <Tags items={p.tech} max={6} />}
-        {p.flagship && p.note && <p className="note">{p.note}</p>}
-        <Links p={p} onDetails={onDetails} />
+        <div className="proj-head">
+          <Meta p={p} flag />
+          <h3 id={`${p.id}-title`}>{p.name}</h3>
+          <p className="sub">{p.sub}</p>
+          <p className="desc">{p.desc}</p>
+        </div>
+        <div className="proj-side">
+          <Features items={p.features || []} limit={4} />
+          {p.tech?.length > 0 && <Tags items={p.tech} max={6} />}
+          {p.flagship && p.note && <p className="note">{p.note}</p>}
+          <Links p={p} onDetails={onDetails} />
+        </div>
       </div>
       {p.flagship && <SystemModel />}
     </article>

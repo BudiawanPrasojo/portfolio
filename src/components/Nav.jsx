@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { links, nav } from '../data/content'
 import { Btn } from './Ui'
+import ThemeToggle from './ThemeToggle'
 
 export default function Nav() {
   const [active, setActive] = useState('')
@@ -62,6 +63,7 @@ export default function Nav() {
         </nav>
         <div className="nav-actions">
           <Btn kind="outline" size="sm" icon="download" download="Budiawan-Prasojo-CV.pdf" href={links.cv}>Download CV</Btn>
+          <ThemeToggle />
           <button className="burger" aria-expanded={open} aria-controls="menu" onClick={() => setOpen(!open)}>
             <span className="sr">{open ? 'Close menu' : 'Open menu'}</span><i /><i /><i />
           </button>

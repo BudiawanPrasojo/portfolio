@@ -24,8 +24,7 @@ export default function Hero() {
           </p>
         </div>
 
-        <figure className="sheet seq" style={{ '--i': 3 }}>
-          <div className="sheet-plan"><BlockModel /><span className="scan" /></div>
+        <figure className="idcard seq" style={{ '--i': 3 }}>
           <div className="portrait">
             <SafeImage src="/profile.jpg" alt={`Portrait of ${p.name}`} label="BP" width="498" height="623" eager />
           </div>
@@ -35,7 +34,13 @@ export default function Hero() {
             <div className="wide"><dt>Program</dt><dd>{p.program}, {p.school}</dd></div>
             <div className="wide"><dt>Seeking</dt><dd>{p.seeking}</dd></div>
           </dl>
-          <figcaption className="sheet-cap">Background: illustrative block-model plan view, not project data.</figcaption>
+        </figure>
+      </div>
+
+      <div className="wrap">
+        <figure className="strip seq" style={{ '--i': 7 }}>
+          <div className="strip-plan"><BlockModel /><span className="scan" /></div>
+          <figcaption>Illustrative block-model plan view, not project data.</figcaption>
         </figure>
       </div>
     </section>

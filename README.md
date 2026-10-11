@@ -20,3 +20,9 @@ All text, links, projects, skills, experience and certifications live in `src/da
 A URL that is empty or starts with `[` is treated as unavailable and its button is hidden
 (for example, Gnosia has no live demo yet: set `demo` to its URL and the button appears).
 To add a project, append one object to `projects` and put its images in `public/projects/`.
+
+## Theme
+Dark and light themes are monochrome and switch with the button in the navigation. The choice is saved in
+`localStorage`; the default is dark. Colors are CSS variables at the top of `src/index.css`
+(`:root` for dark, `:root[data-theme='light']` for light). The profile photo is shown in grayscale and turns
+to color on hover; remove the `filter` line on `.portrait img` to show it in color all the time.
